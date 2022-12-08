@@ -5,3 +5,8 @@ KOKKOSKERNELS_ADD_EXECUTABLE(
     KokkosBlas2_gemv_perf_test
     SOURCES KokkosBlas2_gemv_perf_test.cpp
 )
+
+TARGET_LINK_LIBRARIES(
+    KokkosBlas2_gemv_perf_test
+    PRIVATE benchmark::benchmark
+)

@@ -46,6 +46,8 @@
 #include <Kokkos_Random.hpp>
 #include "KokkosKernels_TestUtils.hpp"
 
+#include <benchmark/benchmark.h>
+
 struct Params {
   int use_cuda    = 0;
   int use_hip     = 0;
@@ -183,6 +185,7 @@ int main(int argc, char** argv) {
   Kokkos::initialize(Kokkos::InitializationSettings()
                          .set_num_threads(num_threads)
                          .set_device_id(device_id));
+  benchmark::Initialize(&argc, argv);
 
   // Create booleans to handle pthreads, openmp and cuda params and initialize
   // to true;
@@ -263,6 +266,7 @@ int main(int argc, char** argv) {
     return 1;
 #endif
   }
+  benchmark::Shutdown();
   Kokkos::finalize();
   return 0;
 }

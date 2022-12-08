@@ -27,7 +27,7 @@ if (KokkosKernels_ENABLE_PERFTESTS)
     TARGET_COMPILE_FEATURES(kokkoskernelsperf_gtest PUBLIC cxx_std_11)
 
     include_directories(sparse)
-    
+
     if(Kokkos_ENABLE_TESTS_AND_PERFSUITE)
         #Add RPS implementations of KK perf tests here
         KOKKOSKERNELS_ADD_EXECUTABLE(
@@ -52,3 +52,29 @@ if (KokkosKernels_ENABLE_PERFTESTS)
     #ADD_SUBDIRECTORY(common)
 endif()
 
+# IF(NOT KokkosKernels_ENABLE_BENCHMARKS)
+#   RETURN()
+# ENDIF()
+
+find_package(benchmark QUIET)
+IF(benchmark_FOUND)
+  MESSAGE(STATUS "Using google benchmark found in ${benchmark_DIR}")
+ELSE()
+  message(STATUS "No installed google benchmark found, fetching from GitHub")
+  include(FetchContent)
+  SET(BENCHMARK_ENABLE_TESTING OFF)
+
+  list(APPEND CMAKE_MESSAGE_INDENT "    ")
+  FetchContent_Declare(
+    googlebenchmark
+    URL https://github.com/google/benchmark/archive/refs/tags/v1.6.2.tar.gz
+    URL_HASH MD5=14d14849e075af116143a161bc3b927b
+  )
+  FetchContent_MakeAvailable(googlebenchmark)
+  list(POP_BACK CMAKE_MESSAGE_INDENT)
+
+  include_directories(${benchmark_SOURCE_DIR}/include)
+
+  target_compile_options(benchmark PRIVATE -w)
+  target_compile_options(benchmark_main PRIVATE -w)
+ENDIF()
